@@ -49,16 +49,7 @@ apiClient.interceptors.response.use(
 
 export const api = {
   async fetchReports(params?: { userId?: string }): Promise<PaginatedReportsResponse> {
-    const response = await apiClient.get<PaginatedReportsResponse | Report[]>('/reports', { params });
-
-    if (Array.isArray(response.data)) {
-      return {
-        data: response.data,
-        nextCursor: null,
-        total: response.data.length,
-      };
-    }
-
+    const response = await apiClient.get<PaginatedReportsResponse>('/reports', { params });
     return response.data;
   },
 

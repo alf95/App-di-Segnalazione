@@ -158,7 +158,7 @@ export default function NewReportScreen() {
         await syncService.syncPendingReports();
         setIsOfflineMode(false);
       } catch (error) {
-        console.error('Immediate sync failed; report queued offline', error);
+        console.warn('Immediate sync failed; report queued offline', error);
         setIsOfflineMode(true);
       }
 
@@ -219,7 +219,7 @@ export default function NewReportScreen() {
       />
       {errors.description ? <Text style={styles.errorText}>{errors.description.message}</Text> : null}
 
-      <Button mode="contained-tonal" onPress={() => handleCapturePhoto().catch(console.error)}>
+      <Button mode="contained-tonal" onPress={() => { void handleCapturePhoto().catch((err: unknown) => console.warn('Photo capture failed', err)); }}>
         Capture photo
       </Button>
       {selectedImageUri ? <Image source={{ uri: selectedImageUri }} style={styles.preview} /> : null}

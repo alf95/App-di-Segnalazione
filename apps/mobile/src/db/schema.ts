@@ -6,7 +6,7 @@ export const schema = appSchema({
     tableSchema({
       name: 'reports',
       columns: [
-        { name: 'id', type: 'string' },
+        // WatermelonDB provides a built-in `id` field — do not redefine it
         { name: 'category_id', type: 'string' },
         { name: 'latitude', type: 'number' },
         { name: 'longitude', type: 'number' },
@@ -22,7 +22,7 @@ export const schema = appSchema({
     tableSchema({
       name: 'sync_queue',
       columns: [
-        { name: 'id', type: 'string' },
+        // WatermelonDB provides a built-in `id` field — do not redefine it
         { name: 'payload', type: 'string' },
         { name: 'operation', type: 'string' },
         { name: 'entity', type: 'string' },
@@ -32,3 +32,4 @@ export const schema = appSchema({
     }),
   ],
 });
+

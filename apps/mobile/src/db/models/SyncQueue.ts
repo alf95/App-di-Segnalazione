@@ -4,7 +4,7 @@ import { field } from '@nozbe/watermelondb/decorators';
 export class SyncQueueModel extends Model {
   static table = 'sync_queue';
 
-  @field('id') queueRecordId!: string;
+  // WatermelonDB provides a built-in `id` field accessible via `this.id`
   @field('payload') payload!: string;
   @field('operation') operation!: string;
   @field('entity') entity!: string;

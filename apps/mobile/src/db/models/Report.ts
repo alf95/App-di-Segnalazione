@@ -4,7 +4,7 @@ import { field } from '@nozbe/watermelondb/decorators';
 export class ReportModel extends Model {
   static table = 'reports';
 
-  @field('id') reportId!: string;
+  // WatermelonDB provides a built-in `id` field accessible via `this.id`
   @field('category_id') categoryId!: string;
   @field('latitude') latitude!: number;
   @field('longitude') longitude!: number;
