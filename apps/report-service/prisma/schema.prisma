@@ -29,7 +29,7 @@ enum PriorityLevel {
 
 model User {
   id                String                @id @default(uuid())
-  keycloakSub       String                @unique @map("keycloak_sub")
+  keycloakId        String                @unique @map("keycloak_id")
   email             String?               @unique
   displayName       String?               @map("display_name")
   createdAt         DateTime              @default(now()) @map("created_at")
