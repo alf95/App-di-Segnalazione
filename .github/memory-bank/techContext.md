@@ -39,9 +39,41 @@ Start as a **Majestic Monolith** (modular), extract services progressively.
 - Consumer groups follow pattern: `<service>-consumer`
 
 ### Mobile
-- **Flutter 3.x** — single codebase iOS + Android
-- Offline-first with **SQLite** local queue (drift ORM)
-- Maps: **Mapbox GL** or **Google Maps SDK**
+- **React Native 0.74+** with **Expo SDK 51+** — single codebase iOS + Android
+- **Language**: TypeScript strict (aligned with backend codebase)
+- **Navigation**: Expo Router (file-based, v3)
+- **State management**: Zustand (aligned with web admin)
+- **Offline-first**: WatermelonDB (SQLite-based, reactive ORM for RN)
+- **Background sync**: `expo-background-fetch` + `expo-task-manager`
+- **Maps**: `react-native-maps` + `@rnmapbox/maps` (Mapbox GL)
+- **Camera / Media**: `expo-camera`, `expo-image-picker`, `expo-media-library`
+- **GPS**: `expo-location` (foreground + background modes)
+- **Push notifications**: `expo-notifications` (FCM + APNs via Expo push service)
+- **Shared types**: TypeScript interfaces shared via monorepo package (`@urbanreport/types`)
+
+#### Key React Native Libraries
+| Feature | Library |
+|---------|---------|
+| HTTP client | `axios` + `react-query` (TanStack Query v5) |
+| Forms | `react-hook-form` + `zod` |
+| Map clustering | `react-native-map-clustering` |
+| Image compression | `expo-image-manipulator` |
+| Secure storage | `expo-secure-store` (JWT tokens) |
+| Offline queue | WatermelonDB sync engine |
+| UI components | `react-native-paper` or custom design system |
+| Testing | Jest + `@testing-library/react-native` |
+
+#### Monorepo Advantage
+React Native shares TypeScript types and validation schemas (`zod`) with the NestJS backend:
+```
+packages/
+  @urbanreport/types/       ← shared DTO interfaces
+  @urbanreport/validators/  ← shared zod schemas
+apps/
+  mobile/                   ← React Native (Expo)
+  admin/                    ← Next.js
+  report-service/           ← NestJS
+```
 
 ### Web Admin
 - **Next.js 14** (App Router) + **React 18**
@@ -62,10 +94,11 @@ Start as a **Majestic Monolith** (modular), extract services progressively.
 - Secrets injected via **Kubernetes Secrets** (never in ConfigMaps)
 - Local dev: `.env` files (git-ignored), `.env.example` committed
 - Prefix by service: `REPORT_DB_URL`, `MEDIA_S3_BUCKET`, etc.
+- Mobile: Expo environment via `app.config.ts` (never hardcode secrets in mobile bundle)
 
 ## External Integrations
 - **AWS Rekognition** — AI content moderation for uploaded media
-- **Firebase FCM / APNs** — mobile push notifications
+- **Firebase FCM / APNs** — mobile push notifications (via Expo push service)
 - **SendGrid** — transactional email
 - **Twilio** — SMS for critical notifications
 - **Municipal APIs** — via Adapter pattern (CityDesk, others TBD)
@@ -76,3 +109,4 @@ Start as a **Majestic Monolith** (modular), extract services progressively.
 - Rate limits: 5 reports/hour per user, 10 login attempts/15min
 - Data retention: configurable per municipality, default 5 years
 - GDPR: soft-delete, anonymize-on-request, export-on-request (72h SLA)
+- Mobile bundle must never contain API secrets — use Expo EAS Secrets for CI/CD
