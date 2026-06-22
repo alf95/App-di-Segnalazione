@@ -6,7 +6,7 @@ env:
 
 # Declarative config showing the plugin setup for UrbanReport:
 # - POST /reports is protected with a rate-limiting plugin capped at 5 requests/hour
-# - ****** are validated against the Keycloak realm, including the JWKS endpoint
+# - JWT bearer tokens are validated against the Keycloak realm, including the JWKS endpoint
 dblessConfig:
   config: |
     _format_version: "3.0"

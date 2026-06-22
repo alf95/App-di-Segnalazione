@@ -156,6 +156,43 @@ export interface PaginatedResult<T> {
   total: number;
 }
 
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  displayName: string | null;
+  roles: UserRole[];
+}
+
+// ─── Media API request/response shapes ───────────────────────────────────────
+
+export interface MediaInitRequest {
+  contentType: string;
+  reportId?: string;
+}
+
+export interface MediaInitResponse {
+  mediaId: string;
+  uploadUrl: string;
+  key: string;
+}
+
+export interface MediaConfirmRequest {
+  mediaId: string;
+  key: string;
+}
+
+export interface MediaConfirmResponse {
+  status: 'processing';
+  mediaId: string;
+}
+
+export interface PaginatedReportsResponse {
+  items: Report[];
+  nextCursor: string | null;
+}
+
 // ─── Kafka Events ─────────────────────────────────────────────────────────────
 
 export interface ReportCreatedEvent {
@@ -193,4 +230,31 @@ export interface MediaProcessedEvent {
   mediaId: string;
   variants: Record<MediaVariant, string>;
   processedAt: string;
+}
+
+export type AuthUser = Pick<User, 'id' | 'email' | 'roles'>;
+
+export type ReportCategory = Category;
+
+export type PaginatedReportsResponse = PaginatedResult<Report>;
+
+export interface MediaInitRequest {
+  contentType: string;
+  reportId?: string;
+}
+
+export interface MediaInitResponse {
+  mediaId: string;
+  uploadUrl: string;
+  key: string;
+}
+
+export interface MediaConfirmRequest {
+  mediaId: string;
+  key: string;
+}
+
+export interface MediaConfirmResponse {
+  status: 'processing';
+  mediaId: string;
 }

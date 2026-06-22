@@ -10,6 +10,18 @@
   "defaultRoles": [
     "citizen"
   ],
+  "defaultRole": {
+    "name": "default-roles-urbanreport",
+    "description": "${role_default-roles}",
+    "composite": true,
+    "clientRole": false,
+    "containerId": "urbanreport",
+    "composites": {
+      "realm": [
+        "citizen"
+      ]
+    }
+  },
   "passwordPolicy": "length(8) and upperCase(1) and specialChars(1)",
   "loginTheme": "keycloak",
   "emailTheme": "keycloak",

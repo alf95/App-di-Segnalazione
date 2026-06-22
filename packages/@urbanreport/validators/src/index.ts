@@ -25,6 +25,8 @@ export const createReportSchema = z.object({
 
 export type CreateReportInput = z.infer<typeof createReportSchema>;
 
+export const CreateReportDtoSchema = createReportSchema;
+
 // ─── Update Status ────────────────────────────────────────────────────────────
 
 export const updateStatusSchema = z.object({

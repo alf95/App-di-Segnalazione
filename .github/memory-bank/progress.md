@@ -8,7 +8,7 @@
 - [ ] `auth-service` integration (Keycloak)
 - [ ] `report-service` — CRUD, state machine, deduplication, priority
 - [ ] `media-service` — pre-signed upload, EXIF strip, resize
-- [ ] Flutter mobile app — report creation, map view, offline queue
+- [ ] React Native (Expo) mobile app — report creation, map view, offline queue
 - [ ] GitHub Actions CI pipeline (lint, test, build, SAST)
 - [ ] Kubernetes manifests + Helm charts (staging)
 

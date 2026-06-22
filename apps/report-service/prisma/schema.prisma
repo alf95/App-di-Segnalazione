@@ -1,0 +1,123 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("REPORT_DB_URL")
+  extensions = [postgis(schema: "public")]
+}
+
+enum ReportStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+  DUPLICATE
+}
+
+enum PriorityLevel {
+  CRITICAL
+  HIGH
+  NORMAL
+  LOW
+}
+
+model User {
+  id                String                @id @default(uuid())
+  keycloakSub       String                @unique @map("keycloak_sub")
+  email             String?               @unique
+  displayName       String?               @map("display_name")
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @updatedAt @map("updated_at")
+  deletedAt         DateTime?             @map("deleted_at")
+  reports           Report[]
+  statusTransitions ReportStatusHistory[] @relation("StatusActor")
+
+  @@map("users")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  weight    Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  reports   Report[]
+
+  @@map("categories")
+}
+
+model Municipality {
+  id        String   @id @default(uuid())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  reports   Report[]
+
+  @@map("municipalities")
+}
+
+model Report {
+  id                 String                @id @default(uuid())
+  reporterId         String                @map("reporter_id")
+  municipalityId     String?               @map("municipality_id")
+  categoryId         String                @map("category_id")
+  duplicateOf        String?               @map("duplicate_of")
+  description        String
+  status             ReportStatus
+  priority           PriorityLevel         @default(NORMAL)
+  locationRisk       Float                 @default(0) @map("location_risk")
+  location           Unsupported("geometry(Point,4326)")
+  confirmationsCount Int                   @default(0) @map("confirmations_count")
+  resolvedAt         DateTime?             @map("resolved_at")
+  createdAt          DateTime              @default(now()) @map("created_at")
+  updatedAt          DateTime              @updatedAt @map("updated_at")
+  deletedAt          DateTime?             @map("deleted_at")
+  reporter           User                  @relation(fields: [reporterId], references: [id])
+  municipality       Municipality?         @relation(fields: [municipalityId], references: [id])
+  category           Category              @relation(fields: [categoryId], references: [id])
+  originalReport     Report?               @relation("ReportDuplicate", fields: [duplicateOf], references: [id])
+  duplicateReports   Report[]              @relation("ReportDuplicate")
+  mediaItems         MediaItem[]
+  statusHistory      ReportStatusHistory[]
+
+  @@index([municipalityId])
+  @@index([status])
+  @@index([duplicateOf])
+  @@map("reports")
+}
+
+model ReportStatusHistory {
+  id         String        @id @default(uuid())
+  reportId   String        @map("report_id")
+  fromStatus ReportStatus? @map("from_status")
+  toStatus   ReportStatus  @map("to_status")
+  actorId    String        @map("actor_id")
+  comment    String?
+  createdAt  DateTime      @default(now()) @map("created_at")
+  report     Report        @relation(fields: [reportId], references: [id])
+  actor      User          @relation("StatusActor", fields: [actorId], references: [id])
+
+  @@index([reportId, createdAt])
+  @@map("report_status_history")
+}
+
+model MediaItem {
+  id         String   @id @default(uuid())
+  reportId   String?  @map("report_id")
+  storageKey String   @map("storage_key")
+  mimeType   String   @map("mime_type")
+  status     String   @default("PENDING")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  report     Report?  @relation(fields: [reportId], references: [id])
+
+  @@index([reportId])
+  @@map("media_items")
+}

@@ -18,6 +18,9 @@
     "strictNullChecks": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false,
+    "useDefineForClassFields": false,
     "paths": {
       "@urbanreport/types": ["packages/@urbanreport/types/src/index.ts"],
       "@urbanreport/validators": ["packages/@urbanreport/validators/src/index.ts"]
