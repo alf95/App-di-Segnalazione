@@ -5,6 +5,7 @@ node_modules/
 dist/
 build/
 coverage/
+.nx/
 .nx/cache/
 
 # Environment files
@@ -37,3 +38,6 @@ android/build/
 
 # Local overrides
 *.local
+
+# Workspace-specific local files
+apps/report-service/package-lock.json
