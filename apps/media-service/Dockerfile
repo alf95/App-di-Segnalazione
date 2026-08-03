@@ -2,12 +2,15 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY tsconfig.base.json ./tsconfig.base.json
+COPY package.json ./package.json
+COPY package-lock.json ./package-lock.json
 COPY apps/media-service/package.json ./apps/media-service/package.json
 COPY apps/media-service/tsconfig.json ./apps/media-service/tsconfig.json
 COPY apps/media-service/src ./apps/media-service/src
 
+RUN npm ci --workspace=apps/media-service --include-workspace-root
+
 WORKDIR /app/apps/media-service
-RUN npm ci
 RUN npm run build
 
 FROM node:20-alpine AS runner

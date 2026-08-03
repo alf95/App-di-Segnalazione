@@ -121,7 +121,8 @@ services:
 
   media-service:
     build:
-      context: ./apps/media-service
+      context: .
+      dockerfile: apps/media-service/Dockerfile
     depends_on:
       kafka:
         condition: service_healthy
@@ -134,7 +135,8 @@ services:
 
   media-worker:
     build:
-      context: ./apps/media-service
+      context: .
+      dockerfile: apps/media-service/Dockerfile
     command: node dist/worker.js
     depends_on:
       kafka:

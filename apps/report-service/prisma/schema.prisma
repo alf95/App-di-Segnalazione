@@ -1,6 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
+  binaryTargets   = ["native", "windows"]
 }
 
 datasource db {
@@ -72,6 +73,8 @@ model Report {
   description        String
   status             ReportStatus
   priority           PriorityLevel         @default(NORMAL)
+  priorityLevel      PriorityLevel         @default(NORMAL) @map("priority_level")
+  priorityScore      Float                 @default(0) @map("priority_score")
   locationRisk       Float                 @default(0) @map("location_risk")
   location           Unsupported("geometry(Point,4326)")
   confirmationsCount Int                   @default(0) @map("confirmations_count")
