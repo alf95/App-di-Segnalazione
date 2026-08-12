@@ -13,7 +13,7 @@ import { ReportsModule } from './reports/reports.module';
     AuthModule,
     ReportsModule,
     CategoriesModule,
-    EventsModule
-  ]
+    EventsModule,
+  ],
 })
 export class AppModule {}

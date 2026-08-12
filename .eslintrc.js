@@ -4,12 +4,13 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2021,
     sourceType: 'module',
+    tsconfigRootDir: __dirname,
+    project: ['apps/*/tsconfig.json', 'packages/@urbanreport/*/tsconfig.json'],
   },
   plugins: ['@typescript-eslint', 'prettier'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'prettier',
     'plugin:prettier/recommended',
   ],

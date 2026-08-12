@@ -14,8 +14,8 @@ import { ReportStateMachineService } from './state-machine/report-state-machine.
     ReportsService,
     DeduplicationService,
     PriorityCalculatorService,
-    ReportStateMachineService
+    ReportStateMachineService,
   ],
-  exports: [ReportsService]
+  exports: [ReportsService],
 })
 export class ReportsModule {}

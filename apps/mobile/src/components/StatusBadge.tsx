@@ -18,7 +18,11 @@ const STATUS_COLORS: Record<ReportStatus, string> = {
 
 export const StatusBadge = ({ status }: StatusBadgeProps) => {
   return (
-    <Chip compact style={{ backgroundColor: STATUS_COLORS[status] }} textStyle={{ color: '#ffffff' }}>
+    <Chip
+      compact
+      style={{ backgroundColor: STATUS_COLORS[status] }}
+      textStyle={{ color: '#ffffff' }}
+    >
       {status.replace(/_/g, ' ')}
     </Chip>
   );

@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
-  MaxLength
+  MaxLength,
 } from 'class-validator';
 
 export class CreateReportDto {

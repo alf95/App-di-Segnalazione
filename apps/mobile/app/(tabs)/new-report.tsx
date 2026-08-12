@@ -4,7 +4,11 @@ import { Controller, useForm, type FieldErrors, type Resolver } from 'react-hook
 import { useQuery } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
-import MapView, { Marker, type MapPressEvent, type MarkerDragStartEndEvent } from 'react-native-maps';
+import MapView, {
+  Marker,
+  type MapPressEvent,
+  type MarkerDragStartEndEvent,
+} from 'react-native-maps';
 import { ActivityIndicator, Banner, Button, Menu, Text, TextInput } from 'react-native-paper';
 import type { Category, CreateReportDto } from '@urbanreport/types';
 import { CreateReportDtoSchema } from '@urbanreport/validators';
@@ -89,11 +93,17 @@ export default function NewReportScreen() {
   };
 
   const handleMapPress = (event: MapPressEvent) => {
-    setMapCoordinates(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude);
+    setMapCoordinates(
+      event.nativeEvent.coordinate.latitude,
+      event.nativeEvent.coordinate.longitude,
+    );
   };
 
   const handleMarkerDragEnd = (event: MarkerDragStartEndEvent) => {
-    setMapCoordinates(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude);
+    setMapCoordinates(
+      event.nativeEvent.coordinate.latitude,
+      event.nativeEvent.coordinate.longitude,
+    );
   };
 
   const handleCapturePhoto = async (): Promise<void> => {
@@ -217,12 +227,23 @@ export default function NewReportScreen() {
           />
         )}
       />
-      {errors.description ? <Text style={styles.errorText}>{errors.description.message}</Text> : null}
+      {errors.description ? (
+        <Text style={styles.errorText}>{errors.description.message}</Text>
+      ) : null}
 
-      <Button mode="contained-tonal" onPress={() => { void handleCapturePhoto().catch((err: unknown) => console.warn('Photo capture failed', err)); }}>
+      <Button
+        mode="contained-tonal"
+        onPress={() => {
+          void handleCapturePhoto().catch((err: unknown) =>
+            console.warn('Photo capture failed', err),
+          );
+        }}
+      >
         Capture photo
       </Button>
-      {selectedImageUri ? <Image source={{ uri: selectedImageUri }} style={styles.preview} /> : null}
+      {selectedImageUri ? (
+        <Image source={{ uri: selectedImageUri }} style={styles.preview} />
+      ) : null}
 
       <Text variant="titleMedium">Location</Text>
       <MapView

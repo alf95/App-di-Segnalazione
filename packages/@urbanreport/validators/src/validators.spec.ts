@@ -1,4 +1,9 @@
-import { createReportSchema, updateStatusSchema, confirmReportSchema, paginationSchema } from './index';
+import {
+  createReportSchema,
+  updateStatusSchema,
+  confirmReportSchema,
+  paginationSchema,
+} from './index';
 import { ReportStatus } from '@urbanreport/types';
 
 describe('createReportSchema', () => {

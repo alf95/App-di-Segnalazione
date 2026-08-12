@@ -8,7 +8,7 @@ export class DeduplicationService {
   async findDuplicate(
     categoryId: string,
     latitude: number,
-    longitude: number
+    longitude: number,
   ): Promise<string | null> {
     const rows = await this.prisma.$queryRaw<Array<{ id: string }>>`
       SELECT id FROM reports

@@ -12,8 +12,8 @@ describe('PriorityCalculatorService', () => {
           confirmations: 0,
           locationRisk: 0,
           hasMedia: false,
-          ageHours: 0
-        })
+          ageHours: 0,
+        }),
       ).toBe(40);
     });
 
@@ -24,8 +24,8 @@ describe('PriorityCalculatorService', () => {
           confirmations: 3,
           locationRisk: 0,
           hasMedia: false,
-          ageHours: 0
-        })
+          ageHours: 0,
+        }),
       ).toBe(15);
     });
 
@@ -36,8 +36,8 @@ describe('PriorityCalculatorService', () => {
           confirmations: 0,
           locationRisk: 2,
           hasMedia: false,
-          ageHours: 0
-        })
+          ageHours: 0,
+        }),
       ).toBe(30);
     });
 
@@ -48,8 +48,8 @@ describe('PriorityCalculatorService', () => {
           confirmations: 0,
           locationRisk: 0,
           hasMedia: true,
-          ageHours: 0
-        })
+          ageHours: 0,
+        }),
       ).toBe(5);
     });
 
@@ -60,8 +60,8 @@ describe('PriorityCalculatorService', () => {
           confirmations: 0,
           locationRisk: 0,
           hasMedia: false,
-          ageHours: 48
-        })
+          ageHours: 48,
+        }),
       ).toBe(4);
     });
 
@@ -72,8 +72,8 @@ describe('PriorityCalculatorService', () => {
           confirmations: 10,
           locationRisk: 0,
           hasMedia: false,
-          ageHours: 0
-        })
+          ageHours: 0,
+        }),
       ).toBe(30);
     });
 
@@ -84,8 +84,8 @@ describe('PriorityCalculatorService', () => {
           confirmations: 0,
           locationRisk: 0,
           hasMedia: false,
-          ageHours: 24 * 25
-        })
+          ageHours: 24 * 25,
+        }),
       ).toBe(20);
     });
 
@@ -96,8 +96,8 @@ describe('PriorityCalculatorService', () => {
           confirmations: 0,
           locationRisk: 0,
           hasMedia: false,
-          ageHours: 0
-        })
+          ageHours: 0,
+        }),
       ).toBe(0);
     });
 
@@ -108,8 +108,8 @@ describe('PriorityCalculatorService', () => {
           confirmations: 100,
           locationRisk: 2,
           hasMedia: true,
-          ageHours: 24 * 100
-        })
+          ageHours: 24 * 100,
+        }),
       ).toBe(135);
     });
   });
@@ -121,7 +121,7 @@ describe('PriorityCalculatorService', () => {
       [44, PriorityLevel.NORMAL],
       [45, PriorityLevel.HIGH],
       [69, PriorityLevel.HIGH],
-      [70, PriorityLevel.CRITICAL]
+      [70, PriorityLevel.CRITICAL],
     ])('returns %s -> %s', (score, expected) => {
       expect(service.getPriorityLevel(score)).toBe(expected);
     });

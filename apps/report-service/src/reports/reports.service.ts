@@ -301,7 +301,10 @@ export class ReportsService {
    * Unsupported("geometry(Point,4326)") type in Prisma and can't use
    * the generated client create().
    */
-  private async insertReport(tx: Prisma.TransactionClient, input: InsertReportInput): Promise<void> {
+  private async insertReport(
+    tx: Prisma.TransactionClient,
+    input: InsertReportInput,
+  ): Promise<void> {
     await tx.$queryRaw`
       INSERT INTO reports (
         id, reporter_id, municipality_id, category_id, description,

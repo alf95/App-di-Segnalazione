@@ -1,10 +1,4 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  HttpStatus
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { STATUS_CODES } from 'http';
 
@@ -24,9 +18,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = context.getRequest<Request>();
 
     const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+      exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
     const exceptionResponse =
       exception instanceof HttpException ? exception.getResponse() : undefined;
@@ -39,16 +31,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
       title,
       status,
       detail,
-      instance: request.url
+      instance: request.url,
     };
 
     response.status(status).json(body);
   }
 
-  private extractDetail(
-    response: string | object | undefined,
-    exception: unknown
-  ): string {
+  private extractDetail(response: string | object | undefined, exception: unknown): string {
     if (typeof response === 'string') {
       return response;
     }
@@ -75,7 +64,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   private extractTitle(
     status: number,
     response: string | object | undefined,
-    detail: string
+    detail: string,
   ): string {
     if (response && typeof response === 'object') {
       const error = (response as { error?: unknown }).error;

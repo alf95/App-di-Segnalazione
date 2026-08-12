@@ -33,9 +33,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       algorithms: ['RS256'],
-      secretOrKey: normalizePublicKey(
-        configService.get<string>('REPORT_JWT_PUBLIC_KEY', '')
-      )
+      secretOrKey: normalizePublicKey(configService.get<string>('REPORT_JWT_PUBLIC_KEY', '')),
     });
   }
 
@@ -43,9 +41,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return {
       sub: payload.sub,
       email: payload.email,
-      roles: Array.isArray(payload.realm_access?.roles)
-        ? payload.realm_access.roles
-        : []
+      roles: Array.isArray(payload.realm_access?.roles) ? payload.realm_access.roles : [],
     };
   }
 }

@@ -8,19 +8,19 @@ const validTransitions: Record<ReportStatus, ReportStatus[]> = {
   [ReportStatus.SUBMITTED]: [
     ReportStatus.UNDER_REVIEW,
     ReportStatus.DUPLICATE,
-    ReportStatus.REJECTED
+    ReportStatus.REJECTED,
   ],
   [ReportStatus.UNDER_REVIEW]: [ReportStatus.ASSIGNED, ReportStatus.REJECTED],
   [ReportStatus.ASSIGNED]: [ReportStatus.IN_PROGRESS, ReportStatus.REJECTED],
   [ReportStatus.IN_PROGRESS]: [ReportStatus.RESOLVED, ReportStatus.REJECTED],
   [ReportStatus.RESOLVED]: [],
   [ReportStatus.REJECTED]: [],
-  [ReportStatus.DUPLICATE]: []
+  [ReportStatus.DUPLICATE]: [],
 };
 
 describe('ReportStateMachineService', () => {
   const prisma = {
-    $transaction: jest.fn()
+    $transaction: jest.fn(),
   } as unknown as PrismaService;
 
   let service: ReportStateMachineService;
@@ -60,22 +60,20 @@ describe('ReportStateMachineService', () => {
   it('throws 422 on invalid transition', async () => {
     const tx = {
       report: {
-        findUnique: jest
-          .fn()
-          .mockResolvedValue({ status: ReportStatus.SUBMITTED }),
-        update: jest.fn()
+        findUnique: jest.fn().mockResolvedValue({ status: ReportStatus.SUBMITTED }),
+        update: jest.fn(),
       },
       reportStatusHistory: {
-        create: jest.fn()
-      }
+        create: jest.fn(),
+      },
     };
 
     (prisma.$transaction as jest.Mock).mockImplementation(
-      async (callback: (client: typeof tx) => Promise<void>) => callback(tx)
+      async (callback: (client: typeof tx) => Promise<void>) => callback(tx),
     );
 
     await expect(
-      service.transition('report-id', ReportStatus.RESOLVED, 'actor-id')
+      service.transition('report-id', ReportStatus.RESOLVED, 'actor-id'),
     ).rejects.toBeInstanceOf(UnprocessableEntityException);
     expect(tx.report.update).not.toHaveBeenCalled();
     expect(tx.reportStatusHistory.create).not.toHaveBeenCalled();

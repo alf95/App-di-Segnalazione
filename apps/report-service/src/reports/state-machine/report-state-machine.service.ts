@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException
-} from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { Prisma, ReportStatus } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -11,14 +7,14 @@ const VALID_TRANSITIONS: Record<ReportStatus, ReportStatus[]> = {
   [ReportStatus.SUBMITTED]: [
     ReportStatus.UNDER_REVIEW,
     ReportStatus.DUPLICATE,
-    ReportStatus.REJECTED
+    ReportStatus.REJECTED,
   ],
   [ReportStatus.UNDER_REVIEW]: [ReportStatus.ASSIGNED, ReportStatus.REJECTED],
   [ReportStatus.ASSIGNED]: [ReportStatus.IN_PROGRESS, ReportStatus.REJECTED],
   [ReportStatus.IN_PROGRESS]: [ReportStatus.RESOLVED, ReportStatus.REJECTED],
   [ReportStatus.RESOLVED]: [],
   [ReportStatus.REJECTED]: [],
-  [ReportStatus.DUPLICATE]: []
+  [ReportStatus.DUPLICATE]: [],
 };
 
 @Injectable()
@@ -33,12 +29,12 @@ export class ReportStateMachineService {
     reportId: string,
     to: ReportStatus,
     actorId: string,
-    comment?: string
+    comment?: string,
   ): Promise<void> {
     await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const report = await tx.report.findUnique({
         where: { id: reportId },
-        select: { status: true }
+        select: { status: true },
       });
 
       if (!report) {
@@ -47,7 +43,7 @@ export class ReportStateMachineService {
 
       if (!this.canTransition(report.status, to)) {
         throw new UnprocessableEntityException(
-          `Invalid status transition from ${report.status} to ${to}`
+          `Invalid status transition from ${report.status} to ${to}`,
         );
       }
 
@@ -55,8 +51,8 @@ export class ReportStateMachineService {
         where: { id: reportId },
         data: {
           status: to,
-          resolvedAt: to === ReportStatus.RESOLVED ? new Date() : undefined
-        }
+          resolvedAt: to === ReportStatus.RESOLVED ? new Date() : undefined,
+        },
       });
 
       await tx.reportStatusHistory.create({
@@ -65,8 +61,8 @@ export class ReportStateMachineService {
           fromStatus: report.status,
           toStatus: to,
           actorId,
-          comment
-        }
+          comment,
+        },
       });
     });
   }

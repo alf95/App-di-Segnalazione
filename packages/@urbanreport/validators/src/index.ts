@@ -31,12 +31,11 @@ export const CreateReportDtoSchema = createReportSchema;
 
 export const updateStatusSchema = z.object({
   status: z.nativeEnum(ReportStatus, {
-    errorMap: () => ({ message: `status must be one of: ${Object.values(ReportStatus).join(', ')}` }),
+    errorMap: () => ({
+      message: `status must be one of: ${Object.values(ReportStatus).join(', ')}`,
+    }),
   }),
-  comment: z
-    .string()
-    .max(1000, 'comment must not exceed 1000 characters')
-    .optional(),
+  comment: z.string().max(1000, 'comment must not exceed 1000 characters').optional(),
 });
 
 export type UpdateStatusInput = z.infer<typeof updateStatusSchema>;
@@ -44,10 +43,7 @@ export type UpdateStatusInput = z.infer<typeof updateStatusSchema>;
 // ─── Confirm Report ───────────────────────────────────────────────────────────
 
 export const confirmReportSchema = z.object({
-  comment: z
-    .string()
-    .max(500, 'comment must not exceed 500 characters')
-    .optional(),
+  comment: z.string().max(500, 'comment must not exceed 500 characters').optional(),
 });
 
 export type ConfirmReportInput = z.infer<typeof confirmReportSchema>;

@@ -3,10 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Kafka, Producer } from 'kafkajs';
 
 export type ReportEventTopic =
-  | 'report.created'
-  | 'report.status_changed'
-  | 'report.confirmed'
-  | 'media.processed';
+  'report.created' | 'report.status_changed' | 'report.confirmed' | 'media.processed';
 
 @Injectable()
 export class EventsService {
@@ -23,7 +20,7 @@ export class EventsService {
 
     const kafka = new Kafka({
       clientId: 'report-service',
-      brokers
+      brokers,
     });
 
     this.producer = kafka.producer();
@@ -36,13 +33,12 @@ export class EventsService {
         topic,
         messages: [
           {
-            value: JSON.stringify(payload)
-          }
-        ]
+            value: JSON.stringify(payload),
+          },
+        ],
       });
     } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : 'Unknown Kafka producer error';
+      const message = error instanceof Error ? error.message : 'Unknown Kafka producer error';
       const stack = error instanceof Error ? error.stack : undefined;
 
       this.logger.error(`Failed to emit "${topic}" event: ${message}`, stack);

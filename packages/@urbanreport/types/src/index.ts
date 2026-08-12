@@ -231,4 +231,3 @@ export interface MediaProcessedEvent {
   variants: Record<MediaVariant, string>;
   processedAt: string;
 }
-

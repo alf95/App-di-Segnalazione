@@ -21,7 +21,9 @@ export default function MyReportsScreen() {
   });
 
   const reports = useMemo(() => {
-    return reportsQuery.data?.data.filter((report) => !user?.id || report.reporterId === user.id) ?? [];
+    return (
+      reportsQuery.data?.data.filter((report) => !user?.id || report.reporterId === user.id) ?? []
+    );
   }, [reportsQuery.data?.data, user?.id]);
 
   return (
@@ -31,7 +33,10 @@ export default function MyReportsScreen() {
       keyExtractor={(item) => item.id}
       ListHeaderComponent={<SyncStatusBar pendingCount={pendingCount} isSyncing={isSyncing} />}
       refreshControl={
-        <RefreshControl refreshing={reportsQuery.isRefetching} onRefresh={() => reportsQuery.refetch()} />
+        <RefreshControl
+          refreshing={reportsQuery.isRefetching}
+          onRefresh={() => reportsQuery.refetch()}
+        />
       }
       renderItem={({ item }: { item: Report }) => (
         <List.Item

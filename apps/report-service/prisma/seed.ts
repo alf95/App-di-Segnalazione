@@ -10,7 +10,7 @@ const categories = [
   { name: 'Abandoned Vehicle', weight: 4 },
   { name: 'Road Damage', weight: 5 },
   { name: 'Flooding', weight: 5 },
-  { name: 'Waste Issue', weight: 3 }
+  { name: 'Waste Issue', weight: 3 },
 ] as const;
 
 async function main(): Promise<void> {
@@ -18,14 +18,14 @@ async function main(): Promise<void> {
     await prisma.category.upsert({
       where: { name: category.name },
       update: { weight: category.weight },
-      create: category
+      create: category,
     });
   }
 
   await prisma.municipality.upsert({
     where: { code: 'DEMO' },
     update: { name: 'Demo Municipality' },
-    create: { name: 'Demo Municipality', code: 'DEMO' }
+    create: { name: 'Demo Municipality', code: 'DEMO' },
   });
 }
 

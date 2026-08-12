@@ -10,7 +10,7 @@ import {
   Post,
   Query,
   Req,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthenticatedUser } from '../auth/authenticated-user.interface';
@@ -31,10 +31,7 @@ export class ReportsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(
-    @Body() dto: CreateReportDto,
-    @Req() request: AuthenticatedRequest
-  ) {
+  create(@Body() dto: CreateReportDto, @Req() request: AuthenticatedRequest) {
     return this.reportsService.create(dto, request.user.sub);
   }
 
@@ -43,7 +40,7 @@ export class ReportsController {
   findMany(
     @Query('after') after?: string,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
-    @Query('municipalityId') municipalityId?: string
+    @Query('municipalityId') municipalityId?: string,
   ) {
     return this.reportsService.findMany({ after, limit, municipalityId });
   }
@@ -59,7 +56,7 @@ export class ReportsController {
   updateStatus(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: UpdateStatusDto,
-    @Req() request: AuthenticatedRequest
+    @Req() request: AuthenticatedRequest,
   ) {
     return this.reportsService.updateStatus(id, dto, request.user.sub);
   }
@@ -69,7 +66,7 @@ export class ReportsController {
   confirm(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: ConfirmReportDto,
-    @Req() request: AuthenticatedRequest
+    @Req() request: AuthenticatedRequest,
   ) {
     return this.reportsService.confirm(id, dto, request.user.sub);
   }

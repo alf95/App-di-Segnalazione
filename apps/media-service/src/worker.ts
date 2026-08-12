@@ -20,16 +20,8 @@ const processMedia = async (payload: MediaUploadedEvent): Promise<void> => {
   const normalizedImage = sharp(sourceBuffer).rotate();
 
   const [thumbBuffer, webBuffer, fullBuffer] = await Promise.all([
-    normalizedImage
-      .clone()
-      .resize(200, 200, { fit: 'cover' })
-      .webp({ quality: 80 })
-      .toBuffer(),
-    normalizedImage
-      .clone()
-      .resize(800, null, { fit: 'inside' })
-      .webp({ quality: 85 })
-      .toBuffer(),
+    normalizedImage.clone().resize(200, 200, { fit: 'cover' }).webp({ quality: 80 }).toBuffer(),
+    normalizedImage.clone().resize(800, null, { fit: 'inside' }).webp({ quality: 85 }).toBuffer(),
     normalizedImage
       .clone()
       .resize(1920, null, { fit: 'inside', withoutEnlargement: true })
