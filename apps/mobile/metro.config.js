@@ -12,6 +12,10 @@ config.watchFolders = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
-config.resolver.blacklistRE = /node_modules[/\\](?!@urbanreport)[/\\].*[/\\]node_modules/;
+config.resolver.blockList = [
+  // Keep the default SDK 54 exclusion: regenerated .expo/types trigger unwanted fast refresh.
+  /\.expo[\\/]types/,
+  /node_modules[/\\](?!@urbanreport)[/\\].*[/\\]node_modules/,
+];
 
 module.exports = config;

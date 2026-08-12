@@ -2,80 +2,81 @@
 
 ## Repo structure
 
-Nx 19 monorepo (`defaultBase: main`). npm workspaces, **not** yarn/pnpm.
+Nx 19 monorepo. npm workspaces (not yarn/pnpm). Nx project names are **scoped** (`@urbanreport/*`) — un-prefixed names like `nx serve report-service` fail.
 
 ```
 apps/
-  report-service/   NestJS 10, Prisma + PostGIS, Kafka producer/consumer
-  media-service/    Express, S3 presigned URLs, Sharp image processing
-  mobile/           Expo SDK 51 + React Native, WatermelonDB, Expo Router
+  report-service/   NestJS 10, Prisma + PostGIS, Kafka producer/consumer (port 3001)
+  media-service/    Express + Sharp + S3 presigned URLs (port 3002); separate worker process
+  mobile/           Expo SDK 51 + React Native, expo-router, WatermelonDB offline-first
 packages/
   @urbanreport/types/       Shared TS types (no deps)
   @urbanreport/validators/  Zod schemas, jest tests
 infra/
-  helm/             Helm charts for report-service, media-service, kong
-  k8s/              Staging kustomize overlays
-  keycloak/         Realm export for local Keycloak
+  helm/ k8s/ keycloak/      Deploy artifacts (realm-export.json imported by local Keycloak)
 ```
 
-## Local dev setup (order matters)
+## Local dev
 
 ```bash
 cp .env.example .env
 cp apps/report-service/.env.example apps/report-service/.env
 cp apps/media-service/.env.example apps/media-service/.env
 docker compose up -d
-npm run db:migrate           # prisma migrate deploy (report-service)
-npm run db:seed              # ts-node prisma/seed.ts
-npx nx serve report-service  # NestJS dev server (port 3001)
-npx nx serve media-service   # Express dev server (port 3002)
-npx nx start mobile          # Expo dev
+
+# build the schema (see Prisma notes — db:migrate won't do it)
+cd apps/report-service && npx prisma generate && npx prisma db push && cd ../..
+npm run db:seed -w @urbanreport/report-service
+
+npx nx start:dev @urbanreport/report-service   # NestJS dev server (port 3001)
+npx nx start:dev @urbanreport/media-service    # Express dev server (port 3002)
+npx nx start:worker @urbanreport/media-service # media worker (consumes media.uploaded)
+npx nx start @urbanreport/mobile               # Expo dev
 ```
+
+There is **no `serve` target** — dev commands are `start` / `start:dev` / `start:worker`, invoked with the scoped project name.
 
 ## Commands
 
-| Command | Scope |
+| Command | Notes |
 |---|---|
-| `npm run lint` / `typecheck` / `test` / `build` | All projects |
-| `npx nx affected:lint --base=HEAD~1 --head=HEAD` | Changed only |
-| `npx nx affected:test --base=HEAD~1 --head=HEAD --ci --coverage` | Changed only |
-| `npm run format` | Prettier all `*.{ts,tsx,js,json,md,yaml,yml}` |
+| `npx nx run @urbanreport/report-service:db:migrate` | `prisma migrate deploy` — see Prisma notes |
+| `npm run db:seed -w @urbanreport/report-service` | `ts-node prisma/seed.ts` |
+| `npm run lint` / `test` / `build` | `nx run-many --target=X --all` |
+| `npm run typecheck` | Only the two shared packages define a `typecheck` target (apps don't); see broken-state note below |
+| `npx nx affected:lint --base=HEAD~1 --head=HEAD` | Same pattern for `affected:typecheck/test/build` |
+| `npm run format` | Prettier over all `*.{ts,tsx,js,json,md,yaml,yml}` |
 
-CI order: `lint -> typecheck -> test -> build` (sequential stages).
+CI order (`.github/workflows/ci.yml`): lint → typecheck → test → build, as sequential jobs on affected projects (`NX_BASE`/`NX_HEAD` set to PR base sha vs `HEAD~1`).
 
-Run a single app's test: `npx nx test report-service` or `npx nx test @urbanreport/validators`.
+Single app test: `npx nx test @urbanreport/report-service` or `npm test -w @urbanreport/report-service`.
 
-## Key architecture
+## Prisma notes (high-value gotchas)
 
-- **Auth**: Keycloak JWT. All API endpoints JWT-guarded unless `@Public()`.
-- **DB**: PostgreSQL 16 + PostGIS 3.4. Prisma ORM with `postgis` extension. All geo queries use PostGIS functions (`ST_DWithin`, `ST_MakePoint`, etc.).
-- **Events**: Kafka topics declared in `docker-compose.yml` `kafka-init` service: `report.created`, `report.status_changed`, `report.confirmed`, `media.uploaded`, `media.processed`, `media.uploaded.dlq`, `municipality.assigned`. Event naming: `<domain>.<event>`.
-- **IDs**: UUIDv4 everywhere, never auto-increment for public entities.
-- **Errors**: RFC 7807 Problem Details.
-- **GDPR**: No PII in logs. Soft-delete (`deletedAt`). Anonymize on account deletion.
-- **Media**: EXIF stripped before storage. S3 presigned URLs (900s TTL). Worker (`apps/media-service/src/worker.ts`) generates thumb/webp (200px), web/webp (800px), full/jpeg (1920px) variants.
+- Migrations are **not committed and none exist in the repo** (gitignored; only `schema.prisma` + `seed.ts` are versioned). `db:migrate` = `prisma migrate deploy`, which creates nothing with zero migration files. To build the schema locally: `cd apps/report-service && npx prisma db push`.
+- **No postinstall runs `prisma generate`** — run `npx prisma generate` manually (from `apps/report-service`) after any schema change.
+- `DB URL` comes from `REPORT_DB_URL`. PostGIS extension is enabled via `previewFeatures = ["postgresqlExtensions"]`.
+- `Report.location` is `Unsupported("geometry(Point,4326)")` — Prisma generates no typed field for it; geo reads/writes need raw SQL with PostGIS functions (`ST_DWithin`, `ST_MakePoint`, …).
 
-## Prisma notes
+## Architecture & conventions
 
-- Migrations are **not committed** (gitignored). Only `schema.prisma` + `seed.ts` under version control.
-- Generate client: `npx prisma generate` (done automatically via postinstall in Nest projects if configured).
-- DB URL from `REPORT_DB_URL` env var.
+- **Auth**: global JWT guard (`APP_GUARD` → `JwtAuthGuard`). Opt out per-route with `@Public()` from `apps/report-service/src/auth/public.decorator.ts`.
+- **Errors**: RFC 7807 Problem Details via `HttpExceptionFilter` (global in `main.ts`).
+- **Events**: Kafka, names always `<domain>.<event>`. Topics (from `docker-compose.yml` `kafka-init`): `report.created`, `report.status_changed`, `report.confirmed`, `media.uploaded`, `media.processed`, `media.uploaded.dlq`, `municipality.assigned`.
+- **IDs**: UUIDv4 everywhere. **GDPR**: no PII in logs, soft-delete (`deletedAt`), anonymize on deletion. **Media**: EXIF stripped before storage, S3 presigned URLs (900s TTL).
+- **Shared code**: `@urbanreport/types` and `@urbanreport/validators` are the single source of truth — import via tsconfig paths (`@urbanreport/types` → `packages/@urbanreport/types/src/index.ts`), never redefine in apps. Mobile additionally maps `@/*` → `apps/mobile/src/*`.
+- **Env layering**: root `.env` only feeds `docker-compose.yml` (POSTGRES_PASSWORD, KC_*). Runtime config lives in `apps/*/.env` (`REPORT_DB_URL`, `KAFKA_BROKERS`, S3 vars, …). Only `.env.example` files are committed. Mobile config uses `EXPO_PUBLIC_*` vars with localhost defaults.
 
-## Package conventions
+## Style (enforced)
 
-- `@urbanreport/types` and `@urbanreport/validators` are the single source of truth for shared types/schemas — never redefine in apps.
-- Path aliases in tsconfig: `@urbanreport/types` → `packages/@urbanreport/types/src`, `@urbanreport/validators` → `packages/@urbanreport/validators/src`.
-- Mobile also uses `@/*` → `apps/mobile/src/*`.
-
-## Style
-
-- `no-console` is a warning, allow `warn`/`error`. `no-explicit-any` is an error (relaxed in tests).
-- Prettier: single quotes, trailing commas, 100 width, LF endings.
-- `@typescript-eslint/no-floating-promises` and `await-thenable` are errors.
-
-## Important constraints from `.github/copilot-instructions.md`
-
+- `no-explicit-any` is an **error** (relaxed only in `*.spec.ts`/`*.test.ts`); `no-floating-promises` and `await-thenable` are errors (hence `void bootstrap()` in `main.ts`); `no-console` is a warning allowing only `warn`/`error`.
+- Prettier: single quotes, trailing commas, printWidth 100, LF endings.
 - async/await over raw Promises.
-- Strip EXIF from all media uploads.
-- Mobile secrets via `expo-secure-store`, never AsyncStorage.
-- Shared types/validators from named packages, never redefined.
+
+## Known broken state
+
+`npm run typecheck` currently fails on `@urbanreport/validators` (TS5095: base tsconfig sets `moduleResolution: "bundler"` but validators overrides `module: "commonjs"`). Only `@urbanreport/types` and `@urbanreport/validators` have a `typecheck` target — the three apps are not typechecked by that command.
+
+## Other instruction sources
+
+- `.github/copilot-instructions.md` + `.github/memory-bank/*.md` — repo convention says to read the full memory-bank before generating code or making architecture decisions; contains the source of the constraints above.

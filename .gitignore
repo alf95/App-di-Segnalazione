@@ -41,3 +41,4 @@ android/build/
 
 # Workspace-specific local files
 apps/report-service/package-lock.json
+package-lock.json

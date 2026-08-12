@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-native",
+    "baseUrl": ".",
     "paths": {
       "@urbanreport/types": ["../../packages/@urbanreport/types/src"],
       "@urbanreport/validators": ["../../packages/@urbanreport/validators/src"],
