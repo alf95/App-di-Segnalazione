@@ -1,3 +1,4 @@
+import { isRunningInExpoGo } from 'expo';
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
 import { syncService } from '@/services/syncService';
@@ -24,6 +25,10 @@ if (!taskScope.__urbanReportBackgroundSyncDefined) {
 }
 
 export const registerBackgroundSyncTask = async (): Promise<void> => {
+  if (isRunningInExpoGo()) {
+    return;
+  }
+
   if (taskScope.__urbanReportBackgroundSyncRegistration) {
     return await taskScope.__urbanReportBackgroundSyncRegistration;
   }
