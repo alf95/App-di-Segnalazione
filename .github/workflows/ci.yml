@@ -33,7 +33,7 @@ jobs:
         run: npx nx affected:lint --base="${NX_BASE}" --head="${NX_HEAD}"
 
       - name: Typecheck affected projects
-        run: npx nx affected:typecheck --base="${NX_BASE}" --head="${NX_HEAD}"
+        run: npx nx affected --target=typecheck --base="${NX_BASE}" --head="${NX_HEAD}"
 
   unit-tests:
     runs-on: ubuntu-latest
