@@ -1,15 +1,13 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "node16",
+    "moduleResolution": "node16",
     "target": "ES2021",
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
-    "paths": {
-      "@urbanreport/types": ["../types/src/index.ts"]
-    }
+    "paths": {}
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]

@@ -12,7 +12,6 @@
     "lib": ["ES2021", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": ".",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -22,8 +21,8 @@
     "emitDecoratorMetadata": false,
     "useDefineForClassFields": false,
     "paths": {
-      "@urbanreport/types": ["packages/@urbanreport/types/src/index.ts"],
-      "@urbanreport/validators": ["packages/@urbanreport/validators/src/index.ts"]
+      "@urbanreport/types": ["./packages/@urbanreport/types/src/index.ts"],
+      "@urbanreport/validators": ["./packages/@urbanreport/validators/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
