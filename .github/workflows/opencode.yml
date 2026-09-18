@@ -8,11 +8,19 @@ on:
 
 jobs:
   opencode:
+    # The repository is public: without an author allowlist, anyone able to comment
+    # could trigger this job and spend the OPENCODE_API_KEY.
     if: |
-      contains(github.event.comment.body, ' /oc') ||
-      startsWith(github.event.comment.body, '/oc') ||
-      contains(github.event.comment.body, ' /opencode') ||
-      startsWith(github.event.comment.body, '/opencode')
+      (
+        github.event.comment.user.login == 'alf95' ||
+        github.event.comment.user.login == 'alfcola-eng'
+      ) &&
+      (
+        contains(github.event.comment.body, ' /oc') ||
+        startsWith(github.event.comment.body, '/oc') ||
+        contains(github.event.comment.body, ' /opencode') ||
+        startsWith(github.event.comment.body, '/opencode')
+      )
     runs-on: ubuntu-latest
     permissions:
       id-token: write
