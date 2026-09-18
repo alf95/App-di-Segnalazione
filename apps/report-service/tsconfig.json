@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "node16",
+    "moduleResolution": "node16",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "incremental": true,
+    "paths": {
+      "@urbanreport/types": ["../../packages/@urbanreport/types/src"],
+      "@urbanreport/validators": ["../../packages/@urbanreport/validators/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "tmp"]
+}

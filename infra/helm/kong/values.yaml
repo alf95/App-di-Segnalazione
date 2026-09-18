@@ -1,0 +1,35 @@
+proxy:
+  enabled: true
+
+env:
+  database: "off"
+
+# Declarative config showing the plugin setup for UrbanReport:
+# - POST /reports is protected with a rate-limiting plugin capped at 5 requests/hour
+# - JWT bearer tokens are validated against the Keycloak realm, including the JWKS endpoint
+dblessConfig:
+  config: |
+    _format_version: "3.0"
+    services:
+      - name: report-service
+        url: http://report-service:3001
+        routes:
+          - name: reports-post
+            paths:
+              - /reports
+            strip_path: false
+            methods:
+              - POST
+            plugins:
+              - name: rate-limiting
+                config:
+                  hour: 5
+                  policy: local
+              - name: openid-connect
+                config:
+                  issuer: http://keycloak.staging.svc.cluster.local/realms/urbanreport
+                  auth_methods:
+                    - bearer
+                  bearer_jwt_auth_enable: true
+                  extra_jwks_uris:
+                    - http://keycloak.staging.svc.cluster.local/realms/urbanreport/protocol/openid-connect/certs

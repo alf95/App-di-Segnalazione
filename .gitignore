@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+coverage/
+.nx/
+.nx/cache/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+
+# Expo / React Native
+.expo/
+.expo-shared/
+ios/build/
+android/.gradle/
+android/app/build/
+android/build/
+
+# Prisma migrations
+**/prisma/migrations/*
+!**/prisma/migrations/.gitkeep
+
+# Local overrides
+*.local
+
+# Workspace-specific local files
+apps/report-service/package-lock.json

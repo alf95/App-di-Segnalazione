@@ -1,0 +1,82 @@
+{
+  "realm": "urbanreport",
+  "enabled": true,
+  "displayName": "UrbanReport",
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "rememberMe": true,
+  "defaultRoles": [
+    "citizen"
+  ],
+  "defaultRole": {
+    "name": "default-roles-urbanreport",
+    "description": "${role_default-roles}",
+    "composite": true,
+    "clientRole": false,
+    "containerId": "urbanreport",
+    "composites": {
+      "realm": [
+        "citizen"
+      ]
+    }
+  },
+  "passwordPolicy": "length(8) and upperCase(1) and specialChars(1)",
+  "loginTheme": "keycloak",
+  "emailTheme": "keycloak",
+  "roles": {
+    "realm": [
+      {
+        "name": "citizen",
+        "description": "Default role for UrbanReport citizens."
+      },
+      {
+        "name": "moderator",
+        "description": "Can review and moderate reported content."
+      },
+      {
+        "name": "municipality_officer",
+        "description": "Can manage municipality assignments and status updates."
+      },
+      {
+        "name": "admin",
+        "description": "Has full administrative access."
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "urbanreport-mobile",
+      "name": "UrbanReport Mobile",
+      "description": "Public client for the Expo mobile application.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "urbanreport://*",
+        "http://localhost:8081/*"
+      ],
+      "webOrigins": [
+        "*"
+      ]
+    },
+    {
+      "clientId": "urbanreport-report-service",
+      "name": "UrbanReport Report Service",
+      "description": "Confidential service client for report-service integrations.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    }
+  ]
+}
