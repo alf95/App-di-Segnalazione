@@ -75,7 +75,8 @@ Single app test: `npx nx test @urbanreport/report-service` or `npm test -w @urba
 
 ## Known broken state
 
-`npm run typecheck` currently fails on `@urbanreport/validators` (TS5095: base tsconfig sets `moduleResolution: "bundler"` but validators overrides `module: "commonjs"`). Only `@urbanreport/types` and `@urbanreport/validators` have a `typecheck` target — the three apps are not typechecked by that command.
+- `npm run typecheck` passes: the previous `@urbanreport/validators` TS5095 failure is gone — all projects now use `module`/`moduleResolution: "node16"` and none sets `baseUrl`.
+- Only `@urbanreport/types` and `@urbanreport/validators` have a `typecheck` target — the three apps are not typechecked by that command (`apps/mobile` is checked with its own TS 6: `npx tsc -p apps/mobile/tsconfig.json --noEmit`).
 
 ## Other instruction sources
 
