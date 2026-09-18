@@ -56,6 +56,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # @prisma/client ships as an un-generated stub: without this step the enum
+      # exports (ReportStatus, PriorityLevel, ...) are missing and ts-jest fails.
+      - name: Generate Prisma client
+        working-directory: apps/report-service
+        run: npx prisma generate
+
       - name: Run affected unit tests
         run: npx nx affected:test --base="${NX_BASE}" --head="${NX_HEAD}" --ci --coverage
 
@@ -79,6 +85,10 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Generate Prisma client
+        working-directory: apps/report-service
+        run: npx prisma generate
 
       - name: Build affected projects
         run: npx nx affected:build --base="${NX_BASE}" --head="${NX_HEAD}"
