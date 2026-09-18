@@ -41,7 +41,6 @@ export class SyncService {
     await database.write(async () => {
       await reportsCollection.create((record) => {
         record._raw.id = localId;
-        record.reportId = localId;
         record.categoryId = data.categoryId;
         record.latitude = data.latitude;
         record.longitude = data.longitude;
@@ -57,7 +56,6 @@ export class SyncService {
       await queueCollection.create((record) => {
         const queueId = generateUuid();
         record._raw.id = queueId;
-        record.queueRecordId = queueId;
         record.payload = JSON.stringify({ id: localId, ...data });
         record.operation = 'create';
         record.entity = 'report';
@@ -91,7 +89,7 @@ export class SyncService {
       }
 
       for (const report of reports) {
-        const queueItem = queueByReportId.get(report.reportId);
+        const queueItem = queueByReportId.get(report.id);
         if (queueItem && queueItem.retryCount > 5) {
           continue;
         }

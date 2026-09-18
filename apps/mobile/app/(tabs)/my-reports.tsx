@@ -22,9 +22,9 @@ export default function MyReportsScreen() {
 
   const reports = useMemo(() => {
     return (
-      reportsQuery.data?.data.filter((report) => !user?.id || report.reporterId === user.id) ?? []
+      reportsQuery.data?.items.filter((report) => !user?.id || report.reporterId === user.id) ?? []
     );
-  }, [reportsQuery.data?.data, user?.id]);
+  }, [reportsQuery.data?.items, user?.id]);
 
   return (
     <FlatList

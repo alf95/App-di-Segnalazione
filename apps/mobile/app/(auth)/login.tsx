@@ -13,6 +13,8 @@ WebBrowser.maybeCompleteAuthSession();
 interface KeycloakUserInfoResponse {
   sub: string;
   email?: string;
+  name?: string;
+  preferred_username?: string;
 }
 
 const discoveryDocument = {
@@ -76,6 +78,7 @@ export default function LoginScreen() {
         const user: AuthUser = {
           id: userInfo.sub,
           email: userInfo.email ?? '',
+          displayName: userInfo.name ?? userInfo.preferred_username ?? null,
           roles: [],
         };
 

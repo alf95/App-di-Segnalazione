@@ -1,10 +1,17 @@
 import { render } from '@testing-library/react-native';
-import type { ReactTestInstance } from 'react-test-renderer';
 import { ReportStatus } from '../../../../packages/@urbanreport/types/src';
 import { StatusBadge } from './StatusBadge';
 
-const hasBackgroundColor = (node: ReactTestInstance, color: string): boolean => {
-  const styles = Array.isArray(node.props.style) ? node.props.style : [node.props.style];
+type StyleProp = { backgroundColor?: string } | null | undefined;
+
+interface TestNode {
+  props: { style?: StyleProp | StyleProp[] };
+  children: Array<TestNode | string>;
+}
+
+const hasBackgroundColor = (node: TestNode, color: string): boolean => {
+  const styleProp = node.props.style;
+  const styles: StyleProp[] = Array.isArray(styleProp) ? styleProp : [styleProp];
 
   if (styles.some((style) => style?.backgroundColor === color)) {
     return true;

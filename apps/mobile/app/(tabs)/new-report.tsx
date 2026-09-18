@@ -35,7 +35,7 @@ const zodResolver: Resolver<CreateReportDto> = async (values) => {
   }, {});
 
   return {
-    values: {} as CreateReportDto,
+    values: {},
     errors,
   };
 };
@@ -51,6 +51,8 @@ export default function NewReportScreen() {
   const categoriesQuery = useQuery({
     queryKey: ['categories'],
     queryFn: async () => await api.fetchCategories(),
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 
   const defaultValues = useMemo<CreateReportDto>(
@@ -193,11 +195,38 @@ export default function NewReportScreen() {
         visible={categoryMenuVisible}
         onDismiss={() => setCategoryMenuVisible(false)}
         anchor={
-          <Button mode="outlined" onPress={() => setCategoryMenuVisible(true)}>
-            {selectedCategory ? selectedCategory.name : 'Select category'}
+          <Button
+            mode="outlined"
+            loading={categoriesQuery.isLoading}
+            disabled={categoriesQuery.isLoading}
+            icon={categoriesQuery.isError ? 'alert-circle-outline' : undefined}
+            onPress={() => setCategoryMenuVisible(true)}
+          >
+            {selectedCategory
+              ? selectedCategory.name
+              : categoriesQuery.isLoading
+                ? 'Loading categories...'
+                : 'Select category'}
           </Button>
         }
       >
+        {categoriesQuery.isError ? (
+          <Menu.Item
+            leadingIcon="refresh"
+            title="Retry loading categories"
+            onPress={() => {
+              setCategoryMenuVisible(false);
+              void categoriesQuery.refetch();
+            }}
+          />
+        ) : null}
+
+        {!categoriesQuery.isLoading &&
+        !categoriesQuery.isError &&
+        (categoriesQuery.data ?? []).length === 0 ? (
+          <Menu.Item title="No categories available" disabled onPress={() => undefined} />
+        ) : null}
+
         {(categoriesQuery.data ?? []).map((category: Category) => (
           <Menu.Item
             key={category.id}
@@ -209,6 +238,12 @@ export default function NewReportScreen() {
           />
         ))}
       </Menu>
+      {categoriesQuery.isError ? (
+        <Text style={styles.errorText}>
+          Could not load categories. Check that the report API is running and reachable from the
+          device.
+        </Text>
+      ) : null}
       {errors.categoryId ? <Text style={styles.errorText}>{errors.categoryId.message}</Text> : null}
 
       <Controller

@@ -13,7 +13,7 @@ config.watchFolders = [
 ];
 
 config.resolver.blockList = [
-  // Keep the default SDK 54 exclusion: regenerated .expo/types trigger unwanted fast refresh.
+  // Keep the default exclusion: regenerated .expo/types trigger unwanted fast refresh.
   /\.expo[\\/]types/,
   /node_modules[/\\](?!@urbanreport)[/\\].*[/\\]node_modules/,
 ];

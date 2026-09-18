@@ -7,7 +7,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: 'urbanreport',
   version: '1.0.0',
   orientation: 'portrait',
-  plugins: ['expo-router'],
+  plugins: ['expo-router', 'expo-secure-store', 'expo-status-bar', 'expo-web-browser', 'expo-font'],
   extra: {
     apiUrl: process.env.EXPO_PUBLIC_API_URL,
   },
